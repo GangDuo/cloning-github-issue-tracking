@@ -12,11 +12,12 @@
     record[CONFIG.STATUS_FIELD]?.value === CONFIG.STATUS_NOT_STARTED &&
     (record[CONFIG.ASSIGNEE_FIELD]?.value?.length ?? 0) > 0;
 
-  const executeAssignAction = (recordId, revision) =>
+  const executeAssignAction = (recordId, assignee, revision) =>
     kintone.api(kintone.api.url('/k/v1/record/status', true), 'PUT', {
       app: kintone.app.getId(),
       id: recordId,
       action: CONFIG.ASSIGN_ACTION,
+      assignee,
       revision
     });
 
@@ -24,7 +25,9 @@
     const { record, recordId } = event;
 
     if (isUnassignedWithAssignee(record)) {
-      executeAssignAction(recordId, record.$revision?.value).catch((error) => {
+      const assignee = record[CONFIG.ASSIGNEE_FIELD].value[0].code;
+
+      executeAssignAction(recordId, assignee, record.$revision?.value).catch((error) => {
         console.error(`アクション「${CONFIG.ASSIGN_ACTION}」の自動実行に失敗しました`, error);
       });
     }
