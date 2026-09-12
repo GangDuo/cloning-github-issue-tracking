@@ -2,7 +2,8 @@
     "scope": "ALL",
     "desktop": {
         "js": [
-            "desktop/js/set-row-class-by-status.js"
+            "desktop/js/set-row-class-by-status.js",
+            "desktop/js/assign-action-on-save.js"
         ],
         "css": [
             "desktop/css/style.css"
