@@ -37,8 +37,5 @@
     return event;
   }
 
-  kintone.events.on(
-    ['app.record.detail.show', 'app.record.create.show', 'app.record.edit.show'],
-    updateAssigneeRequiredNotice
-  );
+  kintone.events.on(['app.record.detail.show', 'app.record.edit.show'], updateAssigneeRequiredNotice);
 })();
