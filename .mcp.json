@@ -9,6 +9,15 @@
         "KINTONE_USERNAME": "${KINTONE_USERNAME}",
         "KINTONE_PASSWORD": "${KINTONE_PASSWORD}"
       }
+    },
+    "playwright": {
+      "type": "stdio",
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ],
+      "env": {}
     }
   }
 }
