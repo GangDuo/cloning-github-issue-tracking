@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "kintone": {
+      "type": "stdio",
+      "command": "kintone-mcp-server",
+      "cwd": "${cwd}",
+      "env": {
+        "KINTONE_BASE_URL": "${KINTONE_BASE_URL}",
+        "KINTONE_USERNAME": "${KINTONE_USERNAME}",
+        "KINTONE_PASSWORD": "${KINTONE_PASSWORD}"
+      }
+    }
+  }
+}
