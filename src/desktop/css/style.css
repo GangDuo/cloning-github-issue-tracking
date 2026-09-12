@@ -14,6 +14,12 @@
   background-color: #e0e0e0 !important;
 }
 
+.assignee-required-notice {
+  color: #d32f2f;
+  font-weight: bold;
+  padding: 4px 0;
+}
+
 .order-details-container {
   display: flex;
   flex-direction: column;
