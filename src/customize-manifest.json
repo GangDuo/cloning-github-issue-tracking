@@ -3,7 +3,8 @@
     "desktop": {
         "js": [
             "desktop/js/set-row-class-by-status.js",
-            "desktop/js/assign-action-on-save.js"
+            "desktop/js/assign-action-on-save.js",
+            "desktop/js/require-assignee-when-in-progress.js"
         ],
         "css": [
             "desktop/css/style.css"
