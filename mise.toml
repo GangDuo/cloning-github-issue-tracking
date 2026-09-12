@@ -1,0 +1,15 @@
+[task_config]
+# Windowsのタスク既定シェルはcmd /cで$VARが展開されないため、bashに固定する
+shell = "bash -c"
+
+[env]
+KINTONE_APP_ID = { default = "76" }
+MANIFEST_PATH = { default = "./src/customize-manifest.json" }
+
+[tasks.export]
+description = "最新を取得"
+run = "cli-kintone customize export --app $KINTONE_APP_ID --output $MANIFEST_PATH -y"
+
+[tasks.deploy]
+description = "反映"
+run = "cli-kintone customize apply --app $KINTONE_APP_ID --input $MANIFEST_PATH -y"

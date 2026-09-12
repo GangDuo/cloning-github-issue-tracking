@@ -1,0 +1,36 @@
+.status-not-started {
+  background-color: #ffdddd !important;
+}
+
+.status-in-progress {
+  background-color: #ffffdd !important;
+}
+
+.status-provided {
+  background-color: #ddffdd !important;
+}
+
+.status-canceled {
+  background-color: #e0e0e0 !important;
+}
+
+.order-details-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.order-details-container > .order-details-box {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.order-details-container > .order-details-box > .order-details-label {
+  text-align: left;
+  width: 60%;
+}
+
+.order-details-container > .order-details-box > .order-details-value {
+  text-align: right;
+}
