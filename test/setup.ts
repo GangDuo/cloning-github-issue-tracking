@@ -26,6 +26,11 @@ function createKintoneStub() {
   };
 }
 
+// setupFilesはテストファイルのimportより先に評価されるため、ここで一度
+// スタブしておかないと、テスト対象モジュールのトップレベルで呼ばれる
+// kintone.events.on(...)がimport時点でReferenceErrorになる。
+vi.stubGlobal('kintone', createKintoneStub());
+
 beforeEach(() => {
   vi.stubGlobal('kintone', createKintoneStub());
 });
