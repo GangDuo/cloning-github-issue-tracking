@@ -1,9 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { setRowClassesByStatus } from './set-row-class-by-status';
 
-type SavedFields = kintone.types.SavedFields;
+type SavedSavedFields = kintone.types.SavedSavedFields;
 
-const buildRecord = (overrides: Partial<SavedFields>): SavedFields => overrides as SavedFields;
+const buildRecord = (overrides: Partial<SavedSavedFields>): SavedSavedFields =>
+  overrides as SavedSavedFields;
 
 function createRow(rowClassName: string): { row: HTMLElement; cell: HTMLElement } {
   const row = document.createElement('div');
