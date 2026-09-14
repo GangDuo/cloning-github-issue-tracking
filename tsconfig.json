@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2019",
+    "lib": ["ES2019", "DOM"],
+    "module": "ES2020",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": [],
+    "forceConsistentCasingInFileNames": true
+  },
+  "files": ["./node_modules/@kintone/dts-gen/kintone.d.ts", "./src/types/fields.d.ts"],
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "src/desktop/js"]
+}
