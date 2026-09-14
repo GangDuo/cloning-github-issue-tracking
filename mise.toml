@@ -13,10 +13,35 @@ MANIFEST_PATH = { default = "./src/customize-manifest.json" }
 description = "kintoneアプリのフィールド定義からTypeScript型を生成"
 run = "npx kintone-dts-gen --base-url $KINTONE_BASE_URL -u $KINTONE_USERNAME -p $KINTONE_PASSWORD --app-id $KINTONE_APP_ID --type-name SavedFields -o ./src/types/fields.d.ts"
 
+[tasks.install]
+description = "依存関係インストール"
+run = "npm ci"
+
+[tasks.build]
+description = "TypeScriptをビルドしてsrc/desktop/js/配下に出力"
+run = "npm run build"
+
+[tasks.typecheck]
+description = "型チェックのみ実行"
+run = "npm run typecheck"
+
+[tasks.test]
+description = "単体テスト実行"
+run = "npm test"
+
+[tasks.lint]
+description = "ESLint実行"
+run = "npm run lint"
+
+[tasks.format]
+description = "Prettier整形"
+run = "npm run format"
+
 [tasks.export]
 description = "最新を取得"
 run = "cli-kintone customize export --app $KINTONE_APP_ID --output $MANIFEST_PATH -y"
 
 [tasks.deploy]
 description = "反映"
+depends = ["build"]
 run = "cli-kintone customize apply --app $KINTONE_APP_ID --input $MANIFEST_PATH -y"
