@@ -1,3 +1,6 @@
+[tools]
+node = "24"
+
 [task_config]
 # Windowsのタスク既定シェルはcmd /cで$VARが展開されないため、bashに固定する
 shell = "bash -c"
