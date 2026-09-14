@@ -1,10 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { advanceStatusIfAssignable } from './assign-action-on-save';
-
-type SavedSavedFields = kintone.types.SavedSavedFields;
-
-const buildRecord = (overrides: Partial<SavedSavedFields>): SavedSavedFields =>
-  overrides as SavedSavedFields;
+import { buildSavedSavedFields } from '../../../test/record-builders';
 
 const ASSIGNEE = { code: 'user1', name: 'ユーザー1' };
 
@@ -16,7 +12,7 @@ beforeEach(() => {
 
 describe('advanceStatusIfAssignable', () => {
   it('未処理×対応者ありのとき、割り当てるアクションをPUTで実行する', async () => {
-    const record = buildRecord({
+    const record = buildSavedSavedFields({
       ステータス: { type: 'STATUS', value: '未処理' },
       対応者: { type: 'USER_SELECT', value: [ASSIGNEE] },
       $revision: { type: '__REVISION__', value: '3' },
@@ -39,7 +35,7 @@ describe('advanceStatusIfAssignable', () => {
   });
 
   it('ステータスが未処理以外のときは呼び出さない', () => {
-    const record = buildRecord({
+    const record = buildSavedSavedFields({
       ステータス: { type: 'STATUS', value: '進行中' },
       対応者: { type: 'USER_SELECT', value: [ASSIGNEE] },
     });
@@ -50,7 +46,7 @@ describe('advanceStatusIfAssignable', () => {
   });
 
   it('対応者が未設定のときは呼び出さない', () => {
-    const record = buildRecord({
+    const record = buildSavedSavedFields({
       ステータス: { type: 'STATUS', value: '未処理' },
       対応者: { type: 'USER_SELECT', value: [] },
     });
@@ -61,7 +57,7 @@ describe('advanceStatusIfAssignable', () => {
   });
 
   it('ハンドラは同期的にeventを返す(fire-and-forget)', () => {
-    const record = buildRecord({
+    const record = buildSavedSavedFields({
       ステータス: { type: 'STATUS', value: '未処理' },
       対応者: { type: 'USER_SELECT', value: [ASSIGNEE] },
     });
@@ -74,7 +70,7 @@ describe('advanceStatusIfAssignable', () => {
     vi.mocked(kintone.api).mockRejectedValue(new Error('network error'));
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-    const record = buildRecord({
+    const record = buildSavedSavedFields({
       ステータス: { type: 'STATUS', value: '未処理' },
       対応者: { type: 'USER_SELECT', value: [ASSIGNEE] },
     });

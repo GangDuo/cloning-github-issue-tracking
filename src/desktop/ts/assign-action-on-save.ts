@@ -1,8 +1,6 @@
 import { ASSIGN_ACTION_NAME, FIELD_CODES } from '../../shared/fields';
 import { isAssigneeEmpty, isStatusNotStarted } from '../../shared/record-helpers';
-import type { RecordSubmitSuccessEvent } from '../../shared/kintone-events';
-
-type SavedSavedFields = kintone.types.SavedSavedFields;
+import type { RecordSubmitSuccessEvent, SavedSavedFields } from '../../shared/kintone-events';
 
 const isUnassignedWithAssignee = (record: SavedSavedFields): boolean =>
   isStatusNotStarted(record) && !isAssigneeEmpty(record);

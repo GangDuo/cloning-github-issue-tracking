@@ -1,6 +1,5 @@
 import { FIELD_CODES, STATUS_VALUES } from './fields';
-
-type SavedFields = kintone.types.SavedFields;
+import type { SavedFields } from './kintone-events';
 
 export const isAssigneeEmpty = (record: SavedFields): boolean =>
   (record[FIELD_CODES.ASSIGNEE]?.value?.length ?? 0) === 0;

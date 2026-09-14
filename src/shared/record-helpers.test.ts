@@ -1,9 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { isAssigneeEmpty, isAssigneeRequiredStatus, isStatusNotStarted } from './record-helpers';
-
-type SavedFields = kintone.types.SavedFields;
-
-const buildRecord = (overrides: Partial<SavedFields>): SavedFields => overrides as SavedFields;
+import type { SavedFields } from './kintone-events';
+import { buildSavedFields } from '../../test/record-builders';
 
 describe('isAssigneeEmpty', () => {
   const cases: Array<[string, Partial<SavedFields>, boolean]> = [
@@ -17,7 +15,7 @@ describe('isAssigneeEmpty', () => {
   ];
 
   it.each(cases)('%s => %s', (_label, overrides, expected) => {
-    expect(isAssigneeEmpty(buildRecord(overrides))).toBe(expected);
+    expect(isAssigneeEmpty(buildSavedFields(overrides))).toBe(expected);
   });
 });
 
@@ -27,7 +25,7 @@ describe('isStatusNotStarted', () => {
     ['進行中', '進行中', false],
     ['完了', '完了', false],
   ] as const)('ステータスが%sのとき%s', (_label, statusValue, expected) => {
-    const record = buildRecord({ ステータス: { type: 'STATUS', value: statusValue } });
+    const record = buildSavedFields({ ステータス: { type: 'STATUS', value: statusValue } });
     expect(isStatusNotStarted(record)).toBe(expected);
   });
 });
@@ -39,7 +37,7 @@ describe('isAssigneeRequiredStatus', () => {
     ['受入テスト中', '受入テスト中', true],
     ['完了', '完了', true],
   ] as const)('ステータスが%sのとき%s', (_label, statusValue, expected) => {
-    const record = buildRecord({ ステータス: { type: 'STATUS', value: statusValue } });
+    const record = buildSavedFields({ ステータス: { type: 'STATUS', value: statusValue } });
     expect(isAssigneeRequiredStatus(record)).toBe(expected);
   });
 });

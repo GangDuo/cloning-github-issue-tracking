@@ -15,6 +15,6 @@
     "./src/types/fields.d.ts",
     "./src/types/kintone-system-fields.d.ts"
   ],
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "src/desktop/js"]
+  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "exclude": ["node_modules"]
 }

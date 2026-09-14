@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { validateAssigneeRequired } from './require-assignee-when-in-progress';
-
-type SavedFields = kintone.types.SavedFields;
-
-const buildRecord = (overrides: Partial<SavedFields>): SavedFields => overrides as SavedFields;
+import { buildSavedFields } from '../../../test/record-builders';
 
 const ASSIGNEE = { code: 'user1', name: 'ユーザー1' };
 const ERROR_MESSAGE = 'ステータスが進行中以降の場合、対応者を設定してください。';
@@ -18,7 +15,7 @@ describe('validateAssigneeRequired', () => {
   ] as const)(
     'ステータス=%s, 対応者数=%i のときエラー付与=%s',
     (status, assignees, shouldError) => {
-      const record = buildRecord({
+      const record = buildSavedFields({
         ステータス: { type: 'STATUS', value: status },
         対応者: { type: 'USER_SELECT', value: [...assignees] },
       });
@@ -30,7 +27,7 @@ describe('validateAssigneeRequired', () => {
   );
 
   it('event自体を返す', () => {
-    const record = buildRecord({
+    const record = buildSavedFields({
       ステータス: { type: 'STATUS', value: '未処理' },
       対応者: { type: 'USER_SELECT', value: [] },
     });

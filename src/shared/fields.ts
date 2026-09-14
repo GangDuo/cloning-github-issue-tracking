@@ -1,6 +1,6 @@
 export const FIELD_CODES = {
   TICKET_NO: 'チケットNo',
-  // 既知のバグ: set-row-class-by-status.tsが本来参照すべきはSTATUSだが、
+  // 既知のバグ(#10): set-row-class-by-status.tsが本来参照すべきはSTATUSだが、
   // 現状はこのCATEGORYを参照している(アプリ設定でカテゴリー機能自体は無効化済み)。
   // 修正は本タスクとは別ブランチ・別PRで対応する。
   CATEGORY: 'カテゴリー',

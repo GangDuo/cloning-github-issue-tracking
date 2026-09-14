@@ -7,6 +7,13 @@ function isMobile(): boolean {
 
 export function setRowClassesByStatus(event: RecordIndexShowEvent): RecordIndexShowEvent {
   const { records } = event;
+
+  // カレンダー表示のときrecordsは配列でなくオブジェクトになり、本関数の
+  // index対応ロジックが成立しない。カレンダー表示は非対応として早期returnする。
+  if (!Array.isArray(records)) {
+    return event;
+  }
+
   const app = isMobile() ? kintone.mobile.app : kintone.app;
   const rowSelector = isMobile()
     ? '.gaia-mobile-v2-app-index-recordlist-table-bodyrow'
@@ -21,7 +28,6 @@ export function setRowClassesByStatus(event: RecordIndexShowEvent): RecordIndexS
       return;
     }
 
-    // Remove existing status classes to avoid conflicts
     rowElement.classList.remove(
       'status-not-started',
       'status-in-progress',
@@ -29,7 +35,6 @@ export function setRowClassesByStatus(event: RecordIndexShowEvent): RecordIndexS
       'status-canceled',
     );
 
-    // Add a new class based on the record's status
     if (record[FIELD_CODES.PRIVATE]?.value?.includes(PRIVATE_VALUE)) {
       rowElement.classList.add('status-canceled');
     } else {
@@ -40,7 +45,7 @@ export function setRowClassesByStatus(event: RecordIndexShowEvent): RecordIndexS
           [STATUS_VALUES.COMPLETED, 'status-provided'],
         ] as const
       ).forEach(([state, className]) => {
-        // 既知のバグ: 本来はFIELD_CODES.STATUSを参照すべきだが、現状は
+        // 既知のバグ(#10): 本来はFIELD_CODES.STATUSを参照すべきだが、現状は
         // FIELD_CODES.CATEGORY('カテゴリー')を参照している(既存挙動を維持。修正は別PRで対応)。
         if (record[FIELD_CODES.CATEGORY]?.value?.includes(state)) {
           rowElement.classList.add(className);

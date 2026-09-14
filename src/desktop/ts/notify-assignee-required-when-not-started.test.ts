@@ -1,10 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { updateAssigneeRequiredNotice } from './notify-assignee-required-when-not-started';
-
-type SavedSavedFields = kintone.types.SavedSavedFields;
-
-const buildRecord = (overrides: Partial<SavedSavedFields>): SavedSavedFields =>
-  overrides as SavedSavedFields;
+import { buildSavedSavedFields } from '../../../test/record-builders';
 
 beforeEach(() => {
   document.body.innerHTML = '';
@@ -15,7 +11,7 @@ describe('updateAssigneeRequiredNotice', () => {
     const spaceElement = document.body.appendChild(document.createElement('div'));
     vi.mocked(kintone.app.record.getHeaderMenuSpaceElement).mockReturnValue(spaceElement);
 
-    const record = buildRecord({
+    const record = buildSavedSavedFields({
       ステータス: { type: 'STATUS', value: '未処理' },
       対応者: { type: 'USER_SELECT', value: [] },
     });
@@ -31,7 +27,7 @@ describe('updateAssigneeRequiredNotice', () => {
     const spaceElement = document.body.appendChild(document.createElement('div'));
     vi.mocked(kintone.app.record.getHeaderMenuSpaceElement).mockReturnValue(spaceElement);
 
-    const record = buildRecord({
+    const record = buildSavedSavedFields({
       ステータス: { type: 'STATUS', value: '進行中' },
       対応者: { type: 'USER_SELECT', value: [] },
     });
@@ -47,7 +43,7 @@ describe('updateAssigneeRequiredNotice', () => {
     const spaceElement = document.body.appendChild(document.createElement('div'));
     vi.mocked(kintone.app.record.getHeaderMenuSpaceElement).mockReturnValue(spaceElement);
 
-    const record = buildRecord({
+    const record = buildSavedSavedFields({
       ステータス: { type: 'STATUS', value: '未処理' },
       対応者: { type: 'USER_SELECT', value: [] },
     });
@@ -63,7 +59,7 @@ describe('updateAssigneeRequiredNotice', () => {
   it('spaceElementがnullのとき例外を投げずeventを返す', () => {
     vi.mocked(kintone.app.record.getHeaderMenuSpaceElement).mockReturnValue(null);
 
-    const record = buildRecord({
+    const record = buildSavedSavedFields({
       ステータス: { type: 'STATUS', value: '未処理' },
       対応者: { type: 'USER_SELECT', value: [] },
     });

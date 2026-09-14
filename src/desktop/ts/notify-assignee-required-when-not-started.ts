@@ -1,7 +1,5 @@
 import { isAssigneeEmpty, isStatusNotStarted } from '../../shared/record-helpers';
-import type { RecordShowEvent } from '../../shared/kintone-events';
-
-type SavedSavedFields = kintone.types.SavedSavedFields;
+import type { RecordShowEvent, SavedSavedFields } from '../../shared/kintone-events';
 
 const NOTICE_ELEMENT_ID = 'notify-assignee-required-when-not-started';
 const MESSAGE = '対応者を設定してください。';
