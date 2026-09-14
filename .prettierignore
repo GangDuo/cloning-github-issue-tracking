@@ -1,0 +1,10 @@
+node_modules/
+.claude/
+src/desktop/js/
+src/desktop/css/
+src/customize-manifest.json
+src/types/fields.d.ts
+package-lock.json
+spec.md
+README.md
+.mcp.json

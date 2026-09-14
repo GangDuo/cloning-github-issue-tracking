@@ -8,7 +8,7 @@ export default defineConfig({
     globals: false,
     coverage: {
       provider: 'v8',
-      include: ['src/desktop/ts/**', 'src/shared/**']
-    }
-  }
+      include: ['src/desktop/ts/**', 'src/shared/**'],
+    },
+  },
 });
