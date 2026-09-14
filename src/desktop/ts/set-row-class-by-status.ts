@@ -45,9 +45,7 @@ export function setRowClassesByStatus(event: RecordIndexShowEvent): RecordIndexS
           [STATUS_VALUES.COMPLETED, 'status-provided'],
         ] as const
       ).forEach(([state, className]) => {
-        // 既知のバグ(#10): 本来はFIELD_CODES.STATUSを参照すべきだが、現状は
-        // FIELD_CODES.CATEGORY('カテゴリー')を参照している(既存挙動を維持。修正は別PRで対応)。
-        if (record[FIELD_CODES.CATEGORY]?.value?.includes(state)) {
+        if (record[FIELD_CODES.STATUS]?.value === state) {
           rowElement.classList.add(className);
         }
       });
