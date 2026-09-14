@@ -9,6 +9,10 @@ shell = "bash -c"
 KINTONE_APP_ID = { default = "76" }
 MANIFEST_PATH = { default = "./src/customize-manifest.json" }
 
+[tasks."dts-gen"]
+description = "kintoneアプリのフィールド定義からTypeScript型を生成"
+run = "npx kintone-dts-gen --base-url $KINTONE_BASE_URL -u $KINTONE_USERNAME -p $KINTONE_PASSWORD --app-id $KINTONE_APP_ID --type-name SavedFields -o ./src/types/fields.d.ts"
+
 [tasks.export]
 description = "最新を取得"
 run = "cli-kintone customize export --app $KINTONE_APP_ID --output $MANIFEST_PATH -y"

@@ -10,7 +10,11 @@
     "types": [],
     "forceConsistentCasingInFileNames": true
   },
-  "files": ["./node_modules/@kintone/dts-gen/kintone.d.ts", "./src/types/fields.d.ts"],
+  "files": [
+    "./node_modules/@kintone/dts-gen/kintone.d.ts",
+    "./src/types/fields.d.ts",
+    "./src/types/kintone-system-fields.d.ts"
+  ],
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "src/desktop/js"]
 }
