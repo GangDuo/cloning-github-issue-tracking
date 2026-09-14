@@ -17,31 +17,33 @@ beforeEach(() => {
 });
 
 describe('setRowClassesByStatus', () => {
-  it('非公開レコードはstatus-canceledのみ付与される', () => {
+  it('非公開レコードは、ステータスが進行中でもstatus-canceledのみ付与される', () => {
     const { row, cell } = createRow('recordlist-row-gaia');
     vi.mocked(kintone.app.getFieldElements).mockReturnValue([cell]);
 
     const record = buildSavedSavedFields({
       非公開: { type: 'CHECK_BOX', value: ['非公開'] },
-      カテゴリー: { type: 'CATEGORY', value: ['進行中'] },
+      ステータス: { type: 'STATUS', value: '進行中' },
     });
 
     setRowClassesByStatus({ records: [record] });
 
     expect(row.classList.contains('status-canceled')).toBe(true);
     expect(row.classList.contains('status-in-progress')).toBe(false);
+    expect(row.classList.contains('status-not-started')).toBe(false);
+    expect(row.classList.contains('status-provided')).toBe(false);
   });
 
   it.each([
     ['未処理', 'status-not-started'],
     ['進行中', 'status-in-progress'],
     ['完了', 'status-provided'],
-  ])('カテゴリーが%sのとき%sが付与される', (categoryValue, expectedClass) => {
+  ])('ステータスが%sのとき%sが付与される', (statusValue, expectedClass) => {
     const { row, cell } = createRow('recordlist-row-gaia');
     vi.mocked(kintone.app.getFieldElements).mockReturnValue([cell]);
 
     const record = buildSavedSavedFields({
-      カテゴリー: { type: 'CATEGORY', value: [categoryValue] },
+      ステータス: { type: 'STATUS', value: statusValue },
     });
 
     setRowClassesByStatus({ records: [record] });
@@ -49,12 +51,12 @@ describe('setRowClassesByStatus', () => {
     expect(row.classList.contains(expectedClass)).toBe(true);
   });
 
-  it('未知のカテゴリー値のときどの状態クラスも付与されない', () => {
+  it('未知のステータス値のときどの状態クラスも付与されない', () => {
     const { row, cell } = createRow('recordlist-row-gaia');
     vi.mocked(kintone.app.getFieldElements).mockReturnValue([cell]);
 
     const record = buildSavedSavedFields({
-      カテゴリー: { type: 'CATEGORY', value: ['不明'] },
+      ステータス: { type: 'STATUS', value: '不明' },
     });
 
     setRowClassesByStatus({ records: [record] });
@@ -70,12 +72,12 @@ describe('setRowClassesByStatus', () => {
     vi.mocked(kintone.app.getFieldElements).mockReturnValue([cell]);
 
     setRowClassesByStatus({
-      records: [buildSavedSavedFields({ カテゴリー: { type: 'CATEGORY', value: ['進行中'] } })],
+      records: [buildSavedSavedFields({ ステータス: { type: 'STATUS', value: '進行中' } })],
     });
     expect(row.classList.contains('status-in-progress')).toBe(true);
 
     setRowClassesByStatus({
-      records: [buildSavedSavedFields({ カテゴリー: { type: 'CATEGORY', value: ['完了'] } })],
+      records: [buildSavedSavedFields({ ステータス: { type: 'STATUS', value: '完了' } })],
     });
     expect(row.classList.contains('status-in-progress')).toBe(false);
     expect(row.classList.contains('status-provided')).toBe(true);
@@ -86,7 +88,7 @@ describe('setRowClassesByStatus', () => {
     const { row, cell } = createRow('gaia-mobile-v2-app-index-recordlist-table-bodyrow');
     vi.mocked(kintone.mobile.app.getFieldElements).mockReturnValue([cell]);
 
-    const record = buildSavedSavedFields({ カテゴリー: { type: 'CATEGORY', value: ['未処理'] } });
+    const record = buildSavedSavedFields({ ステータス: { type: 'STATUS', value: '未処理' } });
     setRowClassesByStatus({ records: [record] });
 
     expect(row.classList.contains('status-not-started')).toBe(true);
@@ -95,7 +97,7 @@ describe('setRowClassesByStatus', () => {
   it('対応する行要素が見つからない場合は何もしない', () => {
     vi.mocked(kintone.app.getFieldElements).mockReturnValue([]);
 
-    const record = buildSavedSavedFields({ カテゴリー: { type: 'CATEGORY', value: ['未処理'] } });
+    const record = buildSavedSavedFields({ ステータス: { type: 'STATUS', value: '未処理' } });
 
     expect(() => setRowClassesByStatus({ records: [record] })).not.toThrow();
   });
