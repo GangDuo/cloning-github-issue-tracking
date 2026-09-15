@@ -1,5 +1,4 @@
 mise.local.toml
 node_modules/
-src/desktop/js/*.js
-src/desktop/js/*.js.map
+src/desktop/js/
 src/desktop/css/kanban-board.css
