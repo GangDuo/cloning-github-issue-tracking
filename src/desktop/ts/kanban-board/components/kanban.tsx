@@ -28,7 +28,7 @@ import { createContext, useState, type HTMLAttributes, type ReactNode } from 're
 import { createPortal } from 'react-dom';
 import { cn } from '../lib/cn';
 
-export type { DragEndEvent } from '@dnd-kit/core';
+export type { DragEndEvent, DragOverEvent } from '@dnd-kit/core';
 
 export type KanbanItemProps = {
   id: string;

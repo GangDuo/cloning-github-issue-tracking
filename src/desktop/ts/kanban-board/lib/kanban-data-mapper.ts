@@ -8,6 +8,9 @@ export interface KanbanTask extends KanbanItemProps {
   displayOrder: number | undefined;
   assigneeName: string;
   parentName: string | undefined;
+  type: string;
+  category: string;
+  milestoneId: string | undefined;
   // 件名・担当者名・詳細(タグ除去済み)を連結した検索用テキスト。キー入力
   // のたびに全件へ毎回タグ除去処理をかけないよう、フェッチ直後に1回だけ
   // ここで計算してキャッシュする。
@@ -42,6 +45,9 @@ export function mapRecordsToKanbanTasks(
       displayOrder: displayOrderValue ? Number(displayOrderValue) : undefined,
       assigneeName,
       parentName: parentTicketNumber ? titleByTicketNumber.get(parentTicketNumber) : undefined,
+      type: record[FIELD_CODES.TYPE]?.value ?? '',
+      category: record[FIELD_CODES.CATEGORY]?.value ?? '',
+      milestoneId: record[FIELD_CODES.MILESTONE_ID]?.value,
       searchText: [title, assigneeName, description].join(' ').toLowerCase(),
       record,
     };
