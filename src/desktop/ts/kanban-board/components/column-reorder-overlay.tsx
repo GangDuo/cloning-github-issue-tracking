@@ -2,22 +2,10 @@
 // 両立のためSortableContextを使わない設計にしたが、ここは対象を
 // 「列(ステータス)×優先度バケット」1組に絞ることで件数を抑え、
 // 一般的なdnd-kit sortableのパターン(仮想化なし)をそのまま使う。
-import {
-  DndContext,
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  closestCenter,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-} from '@dnd-kit/core';
-import {
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
+import { DndContext, closestCenter, type DragEndEvent } from '@dnd-kit/core';
+import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useKanbanDndSensors } from '../hooks/use-kanban-dnd-sensors';
 import type { KanbanTask } from '../lib/kanban-data-mapper';
 import { cn } from '../lib/cn';
 import { Card } from './card';
@@ -67,11 +55,7 @@ export const ColumnReorderOverlay = ({
   isSaving,
   errorMessage,
 }: ColumnReorderOverlayProps) => {
-  const sensors = useSensors(
-    useSensor(MouseSensor),
-    useSensor(TouchSensor),
-    useSensor(KeyboardSensor),
-  );
+  const sensors = useKanbanDndSensors();
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;

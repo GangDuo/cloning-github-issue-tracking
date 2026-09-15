@@ -6,6 +6,11 @@ import { stripHtmlTags } from './search-text';
 export interface KanbanTask extends KanbanItemProps {
   priority: string;
   displayOrder: number | undefined;
+  // 担当者フィルタ(apply-filters.ts)・選択肢抽出(filter-bar.tsx)が生
+  // レコードの内部構造(USER_SELECTのvalue配列)へ潜り込まずに済むよう、
+  // KanbanTask自身がコード・名前の対応を持つ。assigneeNameは表示用に
+  // 連結済みの文字列として別途保持する。
+  assignees: Array<{ code: string; name: string }>;
   assigneeName: string;
   parentName: string | undefined;
   type: string;
@@ -44,6 +49,7 @@ export function mapRecordsToKanbanTasks(
       priority: record[FIELD_CODES.PRIORITY]?.value ?? '',
       displayOrder: displayOrderValue ? Number(displayOrderValue) : undefined,
       assigneeName,
+      assignees: assigneeUsers,
       parentName: parentTicketNumber ? titleByTicketNumber.get(parentTicketNumber) : undefined,
       type: record[FIELD_CODES.TYPE]?.value ?? '',
       category: record[FIELD_CODES.CATEGORY]?.value ?? '',

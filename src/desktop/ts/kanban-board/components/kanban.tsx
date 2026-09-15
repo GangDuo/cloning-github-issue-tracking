@@ -13,19 +13,10 @@
 //   KanbanProviderにrenderOverlayCardを渡してもらい、activeCardIdから
 //   対象データを引いて同じレンダー関数をDragOverlay側で再実行する。
 import type { DndContextProps, DragEndEvent, DragOverEvent, DragStartEvent } from '@dnd-kit/core';
-import {
-  DndContext,
-  DragOverlay,
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  closestCenter,
-  useDroppable,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
+import { DndContext, DragOverlay, closestCenter, useDroppable } from '@dnd-kit/core';
 import { createContext, useState, type HTMLAttributes, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
+import { useKanbanDndSensors } from '../hooks/use-kanban-dnd-sensors';
 import { cn } from '../lib/cn';
 
 export type { DragEndEvent, DragOverEvent } from '@dnd-kit/core';
@@ -90,7 +81,6 @@ export type KanbanProviderProps<
   className?: string;
   columns: C[];
   data: T[];
-  onDataChange?: (data: T[]) => void;
   onDragStart?: (event: DragStartEvent) => void;
   onDragEnd?: (event: DragEndEvent) => void;
   onDragOver?: (event: DragOverEvent) => void;
@@ -108,16 +98,10 @@ export const KanbanProvider = <
   className,
   columns,
   data,
-  onDataChange,
   ...props
 }: KanbanProviderProps<T, C>) => {
   const [activeCardId, setActiveCardId] = useState<string | null>(null);
-
-  const sensors = useSensors(
-    useSensor(MouseSensor),
-    useSensor(TouchSensor),
-    useSensor(KeyboardSensor),
-  );
+  const sensors = useKanbanDndSensors();
 
   const handleDragStart = (event: DragStartEvent) => {
     const card = data.find((item) => item.id === event.active.id);
@@ -125,26 +109,6 @@ export const KanbanProvider = <
       setActiveCardId(event.active.id as string);
     }
     onDragStart?.(event);
-  };
-
-  // ドロップ対象は列全体のみ(個々のカードはドロップターゲットにしない)
-  // ため、over.idは常に列IDになる。カード側からの列解決は行わない。
-  const handleDragOver = (event: DragOverEvent) => {
-    const { active, over } = event;
-    if (!over) return;
-
-    const activeItem = data.find((item) => item.id === active.id);
-    if (!activeItem) return;
-
-    const overColumn = columns.find((col) => col.id === over.id)?.id;
-    if (overColumn && activeItem.column !== overColumn) {
-      const newData = data.map((item) =>
-        item.id === active.id ? { ...item, column: overColumn } : item,
-      );
-      onDataChange?.(newData);
-    }
-
-    onDragOver?.(event);
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -159,7 +123,7 @@ export const KanbanProvider = <
       <DndContext
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
-        onDragOver={handleDragOver}
+        onDragOver={onDragOver}
         onDragStart={handleDragStart}
         sensors={sensors}
         {...props}

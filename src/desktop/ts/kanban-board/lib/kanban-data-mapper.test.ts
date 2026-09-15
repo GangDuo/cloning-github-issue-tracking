@@ -30,6 +30,7 @@ describe('mapRecordsToKanbanTasks', () => {
       priority: '高',
       displayOrder: 20,
       assigneeName: '担当 太郎',
+      assignees: [ASSIGNEE],
       parentName: '親課題',
     });
     expect(task!.searchText).toContain('子課題');
@@ -59,6 +60,7 @@ describe('mapRecordsToKanbanTasks', () => {
     const [task] = mapRecordsToKanbanTasks([leaf], [leaf]);
 
     expect(task!.assigneeName).toBe('');
+    expect(task!.assignees).toEqual([]);
     expect(task!.displayOrder).toBeUndefined();
   });
 });

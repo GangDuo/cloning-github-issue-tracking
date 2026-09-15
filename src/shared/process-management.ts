@@ -16,27 +16,25 @@ export interface StatusTransitionMap {
   resolveAction(from: string, to: string): string | undefined;
 }
 
+const transitionKey = (from: string, to: string): string => `${from}→${to}`;
+
 export async function fetchStatusTransitions(app: number): Promise<StatusTransitionMap> {
   const response = (await kintone.api(kintone.api.url('/k/v1/app/status', true), 'GET', {
     app,
   })) as ProcessManagementResponse;
 
-  const table = new Map<string, Map<string, string>>();
-
-  // 同じfrom/toの組に対して複数アクションが定義されている場合(例:
-  // 「差戻す」と対応者専用の「取消す」)があるため、PRIMARYのみを採用する。
-  // SECONDARYは取り消し操作等の特別な目的のアクションであり、カンバンの
-  // ドラッグ&ドロップによる通常のステータス変更には用いない。
-  for (const action of response.actions) {
-    if (action.type !== 'PRIMARY') continue;
-
-    if (!table.has(action.from)) {
-      table.set(action.from, new Map());
-    }
-    table.get(action.from)!.set(action.to, action.name);
-  }
+  // "from→to"を複合キーにした単一Mapで表現する。同じfrom/toの組に対して
+  // 複数アクションが定義されている場合(例: 「差戻す」と対応者専用の
+  // 「取消す」)があるため、PRIMARYのみを採用する。SECONDARYは取り消し
+  // 操作等の特別な目的のアクションであり、カンバンのドラッグ&ドロップに
+  // よる通常のステータス変更には用いない。
+  const table = new Map(
+    response.actions
+      .filter((action) => action.type === 'PRIMARY')
+      .map((action) => [transitionKey(action.from, action.to), action.name]),
+  );
 
   return {
-    resolveAction: (from, to) => table.get(from)?.get(to),
+    resolveAction: (from, to) => table.get(transitionKey(from, to)),
   };
 }

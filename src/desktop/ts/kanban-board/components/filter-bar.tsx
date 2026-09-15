@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { FIELD_CODES } from '../../../../shared/fields';
 import type { KanbanFilters } from '../lib/apply-filters';
 import type { KanbanTask } from '../lib/kanban-data-mapper';
 
@@ -24,12 +23,7 @@ function toggleValue(values: string[], value: string): string[] {
 
 function useUniqueAssignees(tasks: KanbanTask[]): Array<{ code: string; name: string }> {
   return useMemo(() => {
-    const byCode = new Map<string, string>();
-    for (const task of tasks) {
-      for (const user of task.record[FIELD_CODES.ASSIGNEE]?.value ?? []) {
-        byCode.set(user.code, user.name);
-      }
-    }
+    const byCode = new Map(tasks.flatMap((task) => task.assignees.map((a) => [a.code, a.name])));
     return Array.from(byCode, ([code, name]) => ({ code, name })).sort((a, b) =>
       a.name.localeCompare(b.name),
     );

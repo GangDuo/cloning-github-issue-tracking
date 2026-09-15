@@ -10,6 +10,7 @@ import { VirtualizedCardList } from './components/virtualized-card-list';
 import { applyFilters, EMPTY_FILTERS, type KanbanFilters } from './lib/apply-filters';
 import type { KanbanTask } from './lib/kanban-data-mapper';
 import { comparePriority } from './lib/priority-sort';
+import { resolveDragMessage } from './lib/resolve-drag-message';
 import { useKanbanRecords } from './hooks/use-kanban-records';
 import { changeCardStatus } from './hooks/use-status-transition';
 
@@ -27,28 +28,26 @@ interface ReorderTarget {
 
 export const KanbanBoardApp = () => {
   const app = kintone.app.getId()!;
-  const { tasks, error, refetch, pausePolling, resumePolling } = useKanbanRecords(app);
   const [filters, setFilters] = useState<KanbanFilters>(EMPTY_FILTERS);
   const [transitions, setTransitions] = useState<StatusTransitionMap | null>(null);
   const [reorderTarget, setReorderTarget] = useState<ReorderTarget | null>(null);
   const [dragMessage, setDragMessage] = useState<string | undefined>(undefined);
+  // ステータス変更APIの応答待ちであることを表す実際の非同期処理の進行
+  // 状態。並べ替えオーバーレイの表示中(reorderTarget !== null)と合わせて
+  // 「ポーリングを止めるべき理由があるか」を論理式で導出する。
+  const [isChangingStatus, setIsChangingStatus] = useState(false);
   // ドラッグ中に列を跨いだ瞬間、確定(kintone更新+再取得)を待たずに
   // カードを見た目上ドロップ先の列へ移す一時的な上書き。確定・キャンセル
   // いずれの場合も空にリセットし、以降はtasks(サーバー由来)の値に従う。
   const [pendingColumnOverrides, setPendingColumnOverrides] = useState<Map<string, string>>(new Map());
 
+  const { tasks, error, refetch } = useKanbanRecords(app, {
+    paused: reorderTarget !== null || isChangingStatus,
+  });
+
   useEffect(() => {
     void fetchStatusTransitions(app).then(setTransitions);
   }, [app]);
-
-  // 並べ替えオーバーレイの表示中にポーリングでボードが再取得されると、
-  // オーバーレイが参照している一覧の裏でメインボードのデータがすり替わり
-  // 保存内容と齟齬が生じるため、表示中は一時停止する。
-  useEffect(() => {
-    if (!reorderTarget) return;
-    pausePolling();
-    return () => resumePolling();
-  }, [reorderTarget, pausePolling, resumePolling]);
 
   const filteredTasks = useMemo(() => applyFilters(tasks, filters), [tasks, filters]);
 
@@ -62,16 +61,16 @@ export const KanbanBoardApp = () => {
     [filteredTasks, pendingColumnOverrides],
   );
 
-  const sortedByColumn = useMemo(() => {
-    const map = new Map<string, KanbanTask[]>();
-    for (const column of COLUMNS) {
-      map.set(
-        column.id,
-        displayTasks.filter((task) => task.column === column.id).sort(comparePriority),
-      );
-    }
-    return map;
-  }, [displayTasks]);
+  const sortedByColumn = useMemo(
+    () =>
+      new Map<string, KanbanTask[]>(
+        COLUMNS.map((column) => [
+          column.id,
+          displayTasks.filter((task) => task.column === column.id).sort(comparePriority),
+        ]),
+      ),
+    [displayTasks],
+  );
 
   const kanbanData = useMemo(
     () => COLUMNS.flatMap((column) => sortedByColumn.get(column.id) ?? []),
@@ -107,7 +106,7 @@ export const KanbanBoardApp = () => {
     const originalTask = tasks.find((t) => t.id === task.id);
     if (!originalTask || originalTask.column === toStatus) return;
 
-    pausePolling();
+    setIsChangingStatus(true);
     const result = await changeCardStatus({
       app,
       recordId: Number(originalTask.record.$id.value),
@@ -117,15 +116,9 @@ export const KanbanBoardApp = () => {
       record: originalTask.record,
       transitions,
     });
-    resumePolling();
+    setIsChangingStatus(false);
 
-    if (result.type === 'rejected') {
-      setDragMessage(result.reason);
-    } else if (result.type === 'conflict') {
-      setDragMessage('他のユーザーによって更新されたため、最新の状態を再取得しました');
-    } else if (result.type === 'error') {
-      setDragMessage('更新に失敗しました');
-    }
+    setDragMessage(resolveDragMessage(result));
     await refetch();
   };
 
@@ -151,12 +144,12 @@ export const KanbanBoardApp = () => {
 
       <FilterBar tasks={tasks} filters={filters} onFiltersChange={setFilters} />
 
-      <KanbanProvider
+      <KanbanProvider<KanbanTask>
         columns={COLUMNS}
         data={kanbanData}
         onDragOver={handleDragOver}
         onDragEnd={(event) => void handleDragEnd(event)}
-        renderOverlayCard={(item) => <TaskCardContent task={item as KanbanTask} />}
+        renderOverlayCard={(item) => <TaskCardContent task={item} />}
       >
         {(column) => (
           <KanbanBoard key={column.id} id={column.id}>
@@ -178,10 +171,10 @@ export const KanbanBoardApp = () => {
                 ))}
               </div>
             </KanbanHeader>
-            <VirtualizedCardList columnId={column.id}>
+            <VirtualizedCardList<KanbanTask> columnId={column.id}>
               {(item) => (
                 <Card>
-                  <TaskCardContent task={item as KanbanTask} />
+                  <TaskCardContent task={item} />
                 </Card>
               )}
             </VirtualizedCardList>

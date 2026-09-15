@@ -12,14 +12,13 @@ const task = (overrides: Partial<KanbanTask>): KanbanTask =>
     priority: '',
     displayOrder: undefined,
     assigneeName: '担当 太郎',
+    assignees: [{ code: 'user1', name: '担当 太郎' }],
     parentName: undefined,
     type: 'バグ',
     category: 'サブシステムA',
     milestoneId: '1',
     searchText: '',
-    record: {
-      対応者: { type: 'USER_SELECT', value: [{ code: 'user1', name: '担当 太郎' }] },
-    } as KanbanTask['record'],
+    record: {} as KanbanTask['record'],
     ...overrides,
   }) as KanbanTask;
 

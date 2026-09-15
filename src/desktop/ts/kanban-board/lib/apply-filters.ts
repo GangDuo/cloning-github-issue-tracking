@@ -1,4 +1,3 @@
-import { FIELD_CODES } from '../../../../shared/fields';
 import type { KanbanTask } from './kanban-data-mapper';
 import { matchesSearchText } from './search-text';
 
@@ -33,9 +32,7 @@ export function applyFilters(tasks: KanbanTask[], filters: KanbanFilters): Kanba
     }
     if (
       filters.assigneeCodes.length > 0 &&
-      !task.record[FIELD_CODES.ASSIGNEE]?.value.some((user) =>
-        filters.assigneeCodes.includes(user.code),
-      )
+      !task.assignees.some((assignee) => filters.assigneeCodes.includes(assignee.code))
     ) {
       return false;
     }
