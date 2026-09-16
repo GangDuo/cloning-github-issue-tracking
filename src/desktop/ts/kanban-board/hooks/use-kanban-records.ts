@@ -49,9 +49,12 @@ export function useKanbanRecords(
   const load = useCallback(async () => {
     try {
       const allRecords = await fetchAllRecords({ app, fields: REQUIRED_FIELDS });
-      const visibleRecords = allRecords.filter((record) => !isPrivate(record));
-      const leafTasks = selectLeafTasks(visibleRecords);
-      setTasks(mapRecordsToKanbanTasks(leafTasks, visibleRecords));
+      // 末端判定(selectLeafTasks)は階層構造(親子関係)そのものへの判定であり、
+      // 表示可否(isPrivate)とは独立した関心事。非公開レコードを先に除外すると
+      // その親候補情報が失われ、非公開レコードの祖先が誤って末端タスクとして
+      // 表示されてしまうため、末端判定を全レコードに対して行った後にフィルタする。
+      const leafTasks = selectLeafTasks(allRecords).filter((record) => !isPrivate(record));
+      setTasks(mapRecordsToKanbanTasks(leafTasks, allRecords));
       setError(null);
     } catch (caughtError) {
       setError(caughtError);
