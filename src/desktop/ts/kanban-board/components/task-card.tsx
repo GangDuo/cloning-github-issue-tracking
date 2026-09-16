@@ -4,7 +4,7 @@ export interface TaskCardContentProps {
   task: KanbanTask;
 }
 
-// KanbanCard/column-reorder-overlayの両方から呼ばれるカード内容の
+// DraggableCard(virtualized-card-list.tsx)/column-reorder-overlayの両方から呼ばれるカード内容の
 // レンダリング。ドラッグ用のラッパー(useDraggable/useSortable)は
 // 呼び出し側が担当するため、ここでは純粋に表示内容のみを扱う。
 export const TaskCardContent = ({ task }: TaskCardContentProps) => (

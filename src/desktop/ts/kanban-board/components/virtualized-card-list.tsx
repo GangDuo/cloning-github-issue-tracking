@@ -1,6 +1,6 @@
 // 列内カードの表示を担当するコンポーネント。1000件規模のレコードでも
 // 初回描画が重くならないよう、@tanstack/react-virtualで可視範囲のカード
-// のみをDOM生成する(kanban.tsx冒頭のコメント参照: このためKanbanCardは
+// のみをDOM生成する(kanban.tsx冒頭のコメント参照: このためDraggableCardは
 // SortableContextを使わずuseDraggableのみで構成している)。
 //
 // カードの高さは件名の折返し行数等で可変なため、固定のestimateSizeに

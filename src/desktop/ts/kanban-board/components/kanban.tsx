@@ -2,8 +2,9 @@
 // このプロジェクト向けに以下を変更して移植したもの:
 //
 // - 列内の自由な並べ替え(SortableContext/useSortable)は行わない設計のため、
-//   KanbanCardはuseDraggableのみで構成する(ドロップ対象はKanbanBoard列
-//   全体のみとし、個々のカードはドロップターゲットにしない)。これにより
+//   DraggableCard(virtualized-card-list.tsx)はuseDraggableのみで構成する
+//   (ドロップ対象はKanbanBoard列全体のみとし、個々のカードはドロップ
+//   ターゲットにしない)。これにより
 //   Step7の仮想化(virtualized-card-list.tsx)と両立できる。SortableContext
 //   は列内カード全件の実DOM rectを前提に衝突判定を行うため、仮想化で
 //   画面外のカードをアンマウントすると破綻してしまう。
