@@ -30,6 +30,36 @@ function useUniqueAssignees(tasks: KanbanTask[]): Array<{ code: string; name: st
   }, [tasks]);
 }
 
+interface FilterOption {
+  value: string;
+  label: string;
+}
+
+interface FilterGroupProps {
+  legend: string;
+  options: FilterOption[];
+  selectedValues: string[];
+  onToggle: (value: string) => void;
+}
+
+function FilterGroup({ legend, options, selectedValues, onToggle }: FilterGroupProps) {
+  return (
+    <fieldset className="tw:flex tw:flex-wrap tw:gap-2 tw:border-0 tw:p-0">
+      <legend className="tw:text-xs">{legend}</legend>
+      {options.map((option) => (
+        <label key={option.value} className="tw:flex tw:items-center tw:gap-1">
+          <input
+            type="checkbox"
+            checked={selectedValues.includes(option.value)}
+            onChange={() => onToggle(option.value)}
+          />
+          {option.label}
+        </label>
+      ))}
+    </fieldset>
+  );
+}
+
 // 種別・カテゴリ・マイルストーンの選択肢は、フォーム定義から取得せず
 // 実際にタスクデータに現れている値から動的に抽出する。フィールド定義の
 // 変更(選択肢の追加・削除)に自動で追従できるための判断。マイルストーンは
@@ -50,73 +80,39 @@ export const FilterBar = ({ tasks, filters, onFiltersChange }: FilterBarProps) =
         className="tw:min-w-48 tw:rounded-md tw:border tw:border-kanban-border tw:px-2 tw:py-1"
       />
 
-      <fieldset className="tw:flex tw:flex-wrap tw:gap-2 tw:border-0 tw:p-0">
-        <legend className="tw:text-xs">種別</legend>
-        {types.map((type) => (
-          <label key={type} className="tw:flex tw:items-center tw:gap-1">
-            <input
-              type="checkbox"
-              checked={filters.types.includes(type)}
-              onChange={() => onFiltersChange({ ...filters, types: toggleValue(filters.types, type) })}
-            />
-            {type}
-          </label>
-        ))}
-      </fieldset>
+      <FilterGroup
+        legend="種別"
+        options={types.map((type) => ({ value: type, label: type }))}
+        selectedValues={filters.types}
+        onToggle={(value) => onFiltersChange({ ...filters, types: toggleValue(filters.types, value) })}
+      />
 
-      <fieldset className="tw:flex tw:flex-wrap tw:gap-2 tw:border-0 tw:p-0">
-        <legend className="tw:text-xs">カテゴリ</legend>
-        {categories.map((category) => (
-          <label key={category} className="tw:flex tw:items-center tw:gap-1">
-            <input
-              type="checkbox"
-              checked={filters.categories.includes(category)}
-              onChange={() =>
-                onFiltersChange({ ...filters, categories: toggleValue(filters.categories, category) })
-              }
-            />
-            {category}
-          </label>
-        ))}
-      </fieldset>
+      <FilterGroup
+        legend="カテゴリ"
+        options={categories.map((category) => ({ value: category, label: category }))}
+        selectedValues={filters.categories}
+        onToggle={(value) =>
+          onFiltersChange({ ...filters, categories: toggleValue(filters.categories, value) })
+        }
+      />
 
-      <fieldset className="tw:flex tw:flex-wrap tw:gap-2 tw:border-0 tw:p-0">
-        <legend className="tw:text-xs">マイルストーン</legend>
-        {milestoneIds.map((milestoneId) => (
-          <label key={milestoneId} className="tw:flex tw:items-center tw:gap-1">
-            <input
-              type="checkbox"
-              checked={filters.milestoneIds.includes(milestoneId)}
-              onChange={() =>
-                onFiltersChange({
-                  ...filters,
-                  milestoneIds: toggleValue(filters.milestoneIds, milestoneId),
-                })
-              }
-            />
-            {milestoneId}
-          </label>
-        ))}
-      </fieldset>
+      <FilterGroup
+        legend="マイルストーン"
+        options={milestoneIds.map((milestoneId) => ({ value: milestoneId, label: milestoneId }))}
+        selectedValues={filters.milestoneIds}
+        onToggle={(value) =>
+          onFiltersChange({ ...filters, milestoneIds: toggleValue(filters.milestoneIds, value) })
+        }
+      />
 
-      <fieldset className="tw:flex tw:flex-wrap tw:gap-2 tw:border-0 tw:p-0">
-        <legend className="tw:text-xs">担当者</legend>
-        {assignees.map((assignee) => (
-          <label key={assignee.code} className="tw:flex tw:items-center tw:gap-1">
-            <input
-              type="checkbox"
-              checked={filters.assigneeCodes.includes(assignee.code)}
-              onChange={() =>
-                onFiltersChange({
-                  ...filters,
-                  assigneeCodes: toggleValue(filters.assigneeCodes, assignee.code),
-                })
-              }
-            />
-            {assignee.name}
-          </label>
-        ))}
-      </fieldset>
+      <FilterGroup
+        legend="担当者"
+        options={assignees.map((assignee) => ({ value: assignee.code, label: assignee.name }))}
+        selectedValues={filters.assigneeCodes}
+        onToggle={(value) =>
+          onFiltersChange({ ...filters, assigneeCodes: toggleValue(filters.assigneeCodes, value) })
+        }
+      />
     </div>
   );
 };
