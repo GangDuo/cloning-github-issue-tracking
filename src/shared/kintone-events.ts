@@ -27,3 +27,16 @@ export interface RecordSubmitSuccessEvent {
 export interface RecordShowEvent {
   record: SavedSavedFields;
 }
+
+// カスタマイズビュー(種別「カスタマイズ(JavaScript)」の一覧)では、標準一覧と
+// 異なりrecordsが常に配列で来る。viewName/viewTypeでカンバン専用ビューか
+// どうかを判定するためにこの型を分離している。
+export interface CustomViewIndexShowEvent {
+  appId: number;
+  viewId: number;
+  viewName: string;
+  viewType: 'list' | 'calendar' | 'custom';
+  records: SavedSavedFields[];
+  offset: number;
+  size: number;
+}

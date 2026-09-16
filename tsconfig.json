@@ -4,6 +4,7 @@
     "lib": ["ES2019", "DOM"],
     "module": "ES2020",
     "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -15,6 +16,6 @@
     "./src/types/fields.d.ts",
     "./src/types/kintone-system-fields.d.ts"
   ],
-  "include": ["src/**/*.ts", "test/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "test/**/*.ts"],
   "exclude": ["node_modules"]
 }

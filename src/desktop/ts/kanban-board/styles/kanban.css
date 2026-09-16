@@ -1,0 +1,35 @@
+/* kintone標準画面や他カスタマイズのCSSと衝突しないよう、Tailwindの
+   preflight(グローバルリセット)は意図的にインポートしない。
+   theme/utilitiesのみを個別importし、生成されるユーティリティクラス
+   全てにprefix(tw)で`tw:`接頭辞を付与することでクラス名の衝突を防ぐ。 */
+@layer theme, base, utilities;
+@import 'tailwindcss/theme.css' layer(theme) prefix(tw);
+@import 'tailwindcss/utilities.css' layer(utilities) prefix(tw);
+@source '../components';
+@source '../hooks';
+@source '../lib';
+
+/* --color-<name>で定義するとbg-kanban-<name>, text-kanban-<name>,
+   border-kanban-<name>等のユーティリティクラスが自動生成される
+   (prefix(tw)により実際はtw:bg-kanban-<name>等になる)。prefixで
+   他画面との衝突は防げているため命名自体はシンプルにしつつ、
+   意図を示すkanban-接頭辞のみ付ける。 */
+@theme {
+  --color-kanban-background: oklch(1 0 0);
+  --color-kanban-foreground: oklch(0.145 0 0);
+  --color-kanban-border: oklch(0.922 0 0);
+  --color-kanban-primary: oklch(0.205 0 0);
+  --color-kanban-secondary: oklch(0.97 0 0);
+}
+
+.kanban-board-root {
+  box-sizing: border-box;
+}
+
+/* Tailwind preflightを使わない代わりの最小限のリセット。
+   box-sizingのみ本コンポーネント配下に限定して統一する。 */
+.kanban-board-root *,
+.kanban-board-root *::before,
+.kanban-board-root *::after {
+  box-sizing: inherit;
+}

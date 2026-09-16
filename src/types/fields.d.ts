@@ -1,15 +1,17 @@
 declare namespace kintone.types {
   interface SavedFields {
-    完了予定日: kintone.fieldTypes.Date;
-    親: kintone.fieldTypes.SingleLineText;
-    開始予定日: kintone.fieldTypes.Date;
     詳細: kintone.fieldTypes.RichText;
-    優先度: kintone.fieldTypes.DropDown;
-    起票者: kintone.fieldTypes.DropDown;
-    種別: kintone.fieldTypes.DropDown;
     マイルストーンid: kintone.fieldTypes.Number;
     ルックアップ: kintone.fieldTypes.SingleLineText;
     件名: kintone.fieldTypes.SingleLineText;
+    完了予定日: kintone.fieldTypes.Date;
+    親: kintone.fieldTypes.SingleLineText;
+    開始予定日: kintone.fieldTypes.Date;
+    カテゴリ: kintone.fieldTypes.DropDown;
+    優先度: kintone.fieldTypes.DropDown;
+    起票者: kintone.fieldTypes.DropDown;
+    種別: kintone.fieldTypes.DropDown;
+    表示順: kintone.fieldTypes.Number;
 
     非公開: kintone.fieldTypes.CheckBox;
     対応者: kintone.fieldTypes.UserSelect;
