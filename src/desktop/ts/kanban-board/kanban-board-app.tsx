@@ -8,10 +8,10 @@ import { KanbanBoard, KanbanHeader, KanbanProvider } from './components/kanban';
 import { TaskCardContent } from './components/task-card';
 import { VirtualizedCardList } from './components/virtualized-card-list';
 import { useDragToChangeStatus } from './hooks/use-drag-to-change-status';
+import { useKanbanBoardView, type ReorderTarget } from './hooks/use-kanban-board-view';
 import { useKanbanRecords } from './hooks/use-kanban-records';
 import { applyFilters, EMPTY_FILTERS, type KanbanFilters } from './lib/apply-filters';
 import type { KanbanTask } from './lib/kanban-data-mapper';
-import { comparePriority } from './lib/priority-sort';
 
 const COLUMNS = [
   { id: STATUS_VALUES.NOT_STARTED, name: STATUS_VALUES.NOT_STARTED },
@@ -19,11 +19,6 @@ const COLUMNS = [
   { id: STATUS_VALUES.ACCEPTANCE_TESTING, name: STATUS_VALUES.ACCEPTANCE_TESTING },
   { id: STATUS_VALUES.COMPLETED, name: STATUS_VALUES.COMPLETED },
 ];
-
-interface ReorderTarget {
-  columnId: string;
-  priority: string;
-}
 
 export const KanbanBoardApp = () => {
   const app = kintone.app.getId()!;
@@ -55,30 +50,11 @@ export const KanbanBoardApp = () => {
     onChangingStatusChange: setIsChangingStatus,
   });
 
-  const sortedByColumn = useMemo(
-    () =>
-      new Map<string, KanbanTask[]>(
-        COLUMNS.map((column) => [
-          column.id,
-          displayTasks.filter((task) => task.column === column.id).sort(comparePriority),
-        ]),
-      ),
-    [displayTasks],
-  );
-
-  const kanbanData = useMemo(
-    () => COLUMNS.flatMap((column) => sortedByColumn.get(column.id) ?? []),
-    [sortedByColumn],
-  );
-
-  const reorderColumnName = reorderTarget
-    ? (COLUMNS.find((column) => column.id === reorderTarget.columnId)?.name ?? reorderTarget.columnId)
-    : '';
-  const reorderItems = reorderTarget
-    ? (sortedByColumn.get(reorderTarget.columnId) ?? []).filter(
-        (task) => task.priority === reorderTarget.priority,
-      )
-    : [];
+  const { sortedByColumn, kanbanData, reorderColumnName, reorderItems } = useKanbanBoardView({
+    displayTasks,
+    columns: COLUMNS,
+    reorderTarget,
+  });
 
   return (
     <div className="tw:kanban-board-root">
