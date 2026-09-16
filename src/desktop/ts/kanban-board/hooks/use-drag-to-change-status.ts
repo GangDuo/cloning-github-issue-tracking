@@ -70,12 +70,17 @@ export function useDragToChangeStatus({
 
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
-    setPendingColumnOverrides(new Map());
-    if (!over || !transitions) return;
+    if (!over || !transitions) {
+      setPendingColumnOverrides(new Map());
+      return;
+    }
 
     const toStatus = columns.find((column) => column.id === over.id)?.id;
     const originalTask = tasks.find((task) => task.id === active.id);
-    if (!originalTask || !toStatus || originalTask.column === toStatus) return;
+    if (!originalTask || !toStatus || originalTask.column === toStatus) {
+      setPendingColumnOverrides(new Map());
+      return;
+    }
 
     onChangingStatusChange(true);
     const result = await changeCardStatus({
@@ -87,10 +92,14 @@ export function useDragToChangeStatus({
       record: originalTask.record,
       transitions,
     });
-    onChangingStatusChange(false);
 
     setDragMessage(resolveDragMessage(result));
+    // refetchでtasksが最新化されるまでpendingColumnOverridesとisChangingStatusを
+    // 保持する。先に解除すると古いtasksスナップショットに対してポーリング/再
+    // ドラッグが可能になり、古いrevisionでkintone更新を送ってしまう恐れがある。
     await refetch();
+    setPendingColumnOverrides(new Map());
+    onChangingStatusChange(false);
   };
 
   return { displayTasks, dragMessage, handleDragOver, handleDragEnd };

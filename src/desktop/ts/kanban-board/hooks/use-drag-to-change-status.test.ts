@@ -113,6 +113,44 @@ describe('useDragToChangeStatus', () => {
     expect(result.current.dragMessage).toBe('この状態への変更はプロセス管理で許可されていません');
   });
 
+  it('onChangingStatusChange(false)はrefetch完了後に呼ばれる', async () => {
+    const tasks = [task('1', '未処理')];
+    const callOrder: string[] = [];
+    const refetch = vi.fn(async () => {
+      callOrder.push('refetch:start');
+      await Promise.resolve();
+      callOrder.push('refetch:end');
+    });
+    const onChangingStatusChange = vi.fn((isChanging: boolean) => {
+      callOrder.push(`onChangingStatusChange:${isChanging}`);
+    });
+    const { result } = renderHook(() =>
+      useDragToChangeStatus({
+        app: 76,
+        tasks,
+        filteredTasks: tasks,
+        transitions: allowTransition,
+        columns: COLUMNS,
+        refetch,
+        onChangingStatusChange,
+      }),
+    );
+
+    await act(() =>
+      result.current.handleDragEnd({
+        active: { id: '1' },
+        over: { id: '進行中' },
+      } as Parameters<typeof result.current.handleDragEnd>[0]),
+    );
+
+    expect(callOrder).toEqual([
+      'onChangingStatusChange:true',
+      'refetch:start',
+      'refetch:end',
+      'onChangingStatusChange:false',
+    ]);
+  });
+
   it('同じ列へのドロップは何もしない', async () => {
     const tasks = [task('1', '未処理')];
     const refetch = vi.fn();
