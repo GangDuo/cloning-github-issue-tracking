@@ -8,9 +8,9 @@
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { useContext, useRef, type ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import { cn } from '../lib/cn';
-import { KanbanContext, type KanbanContextProps, type KanbanItemProps } from './kanban';
+import type { KanbanItemProps } from './kanban';
 
 const ESTIMATED_CARD_HEIGHT_PX = 72;
 
@@ -39,16 +39,14 @@ const DraggableCard = ({ id, children }: DraggableCardProps) => {
 };
 
 export interface VirtualizedCardListProps<T extends KanbanItemProps = KanbanItemProps> {
-  columnId: string;
+  items: T[];
   children: (item: T) => ReactNode;
 }
 
 export const VirtualizedCardList = <T extends KanbanItemProps = KanbanItemProps>({
-  columnId,
+  items,
   children,
 }: VirtualizedCardListProps<T>) => {
-  const { data } = useContext(KanbanContext) as KanbanContextProps<T>;
-  const items = data.filter((item) => item.column === columnId);
   const parentRef = useRef<HTMLDivElement>(null);
 
   const virtualizer = useVirtualizer({

@@ -120,7 +120,7 @@ export const KanbanBoardApp = () => {
                 ))}
               </div>
             </KanbanHeader>
-            <VirtualizedCardList<KanbanTask> columnId={column.id}>
+            <VirtualizedCardList<KanbanTask> items={sortedByColumn.get(column.id) ?? []}>
               {(item) => (
                 <Card>
                   <TaskCardContent task={item} />

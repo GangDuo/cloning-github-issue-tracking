@@ -15,7 +15,7 @@
 //   対象データを引いて同じレンダー関数をDragOverlay側で再実行する。
 import type { DndContextProps, DragEndEvent, DragOverEvent, DragStartEvent } from '@dnd-kit/core';
 import { DndContext, DragOverlay, closestCenter, useDroppable } from '@dnd-kit/core';
-import { createContext, useState, type HTMLAttributes, type ReactNode } from 'react';
+import { createContext, useMemo, useState, type HTMLAttributes, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { useKanbanDndSensors } from '../hooks/use-kanban-dnd-sensors';
 import { cn } from '../lib/cn';
@@ -103,10 +103,10 @@ export const KanbanProvider = <
 }: KanbanProviderProps<T, C>) => {
   const [activeCardId, setActiveCardId] = useState<string | null>(null);
   const sensors = useKanbanDndSensors();
+  const dataById = useMemo(() => new Map(data.map((item) => [item.id, item])), [data]);
 
   const handleDragStart = (event: DragStartEvent) => {
-    const card = data.find((item) => item.id === event.active.id);
-    if (card) {
+    if (dataById.has(event.active.id as string)) {
       setActiveCardId(event.active.id as string);
     }
     onDragStart?.(event);
@@ -117,7 +117,7 @@ export const KanbanProvider = <
     onDragEnd?.(event);
   };
 
-  const activeItem = data.find((item) => item.id === activeCardId);
+  const activeItem = activeCardId ? dataById.get(activeCardId) : undefined;
 
   return (
     <KanbanContext.Provider value={{ columns, data, activeCardId }}>
